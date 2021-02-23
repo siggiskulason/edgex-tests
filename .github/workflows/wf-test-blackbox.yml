@@ -504,43 +504,43 @@ jobs:
         reporters: "junit,cli"    
  #       suppressExitCode: true  
 
-    - name: MM Failure
-      if: ${{ failure() }}
-      run: |
-        curl -i -X POST -H 'Content-Type: application/json' -d '{"username" : "github-builds", "text" : "<!channel> :warning: Tests failed [${{github.event_name}}] ${{github.workflow}} [See logs](https://github.com/canonical/edgex-sync/actions/runs/${{github.run_id}}) "}' ${{secrets.MATTERMOST}}
-
-
-#    - name: Output summary to console
+#    - name: MM Failure
+#      if: ${{ failure() }}
 #      run: |
-#        echo ${{ steps.test-device-virtual.outputs.summary }}
-#        echo ${{ steps.test-app-service-configurable.outputs.summary }}
-#        echo ${{ steps.test-core-data-reading.outputs.summary }}
-#        echo ${{ steps.test-core-data-reading_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-core-data-valuedescriptor.outputs.summary }}
-#        echo ${{ steps.test-core-data-valuedescriptor_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-core-data_event.outputs.summary }}
-#        echo ${{ steps.test-core-data-event_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-core-command-device.outputs.summary }}
-#        echo ${{ steps.test-core-command-device_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-metadata-addressable.outputs.summary }}
-#        echo ${{ steps.test-metadata-addressable_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-metadata-command.outputs.summary }}
-#        echo ${{ steps.test-metadata-command_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-metadata-device.outputs.summary }}
-#        echo ${{ steps.test-metadata-device_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-metadata-deviceprofile.outputs.summary }}
-#        echo ${{ steps.test-metadata-deviceprofile_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-metadata-devicereport.outputs.summary }}
-#        echo ${{ steps.test-metadata-devicereport_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-metadata-deviceservice.outputs.summary }}
-#        echo ${{ steps.test-metadata-deviceservice_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-metadata-provisionwatcher.outputs.summary }}
-#        echo ${{ steps.test-metadata-provisionwatcher_error_4xx.outputs.summary }}
-#        echo ${{ steps.test-support-notifications-subscription.outputs.summary }}
-#        echo ${{ steps.test-support-notifications-notification.outputs.summary }}
-#        echo ${{ steps.test-support-notifications-transmission.outputs.summary }}
-#        echo ${{ steps.test-support-notifications-ping.outputs.summary }}
-#        echo ${{ steps.test-support-scheduler-interval.outputs.summary }}
-#        echo ${{ steps.test-support-scheduler-intervalAction.outputs.summary }}
-#        echo ${{ steps.test-system-management.outputs.summary }}
- 
+#        curl -i -X POST -H 'Content-Type: application/json' -d '{"username" : "github-builds", "text" : "<!channel> :warning: Tests failed [${{github.event_name}}] ${{github.workflow}} [See logs](https://github.com/canonical/edgex-sync/actions/runs/${{github.run_id}}) "}' ${{secrets.MATTERMOST}}
+
+
+    - name: Output summary to console
+      run: |
+        echo ${{ steps.test-device-virtual.outputs.summary }}
+        echo ${{ steps.test-app-service-configurable.outputs.summary }}
+        echo ${{ steps.test-core-data-reading.outputs.summary }}
+        echo ${{ steps.test-core-data-reading_error_4xx.outputs.summary }}
+        echo ${{ steps.test-core-data-valuedescriptor.outputs.summary }}
+        echo ${{ steps.test-core-data-valuedescriptor_error_4xx.outputs.summary }}
+        echo ${{ steps.test-core-data_event.outputs.summary }}
+        echo ${{ steps.test-core-data-event_error_4xx.outputs.summary }}
+        echo ${{ steps.test-core-command-device.outputs.summary }}
+        echo ${{ steps.test-core-command-device_error_4xx.outputs.summary }}
+        echo ${{ steps.test-metadata-addressable.outputs.summary }}
+        echo ${{ steps.test-metadata-addressable_error_4xx.outputs.summary }}
+        echo ${{ steps.test-metadata-command.outputs.summary }}
+        echo ${{ steps.test-metadata-command_error_4xx.outputs.summary }}
+        echo ${{ steps.test-metadata-device.outputs.summary }}
+        echo ${{ steps.test-metadata-device_error_4xx.outputs.summary }}
+        echo ${{ steps.test-metadata-deviceprofile.outputs.summary }}
+        echo ${{ steps.test-metadata-deviceprofile_error_4xx.outputs.summary }}
+        echo ${{ steps.test-metadata-devicereport.outputs.summary }}
+        echo ${{ steps.test-metadata-devicereport_error_4xx.outputs.summary }}
+        echo ${{ steps.test-metadata-deviceservice.outputs.summary }}
+        echo ${{ steps.test-metadata-deviceservice_error_4xx.outputs.summary }}
+        echo ${{ steps.test-metadata-provisionwatcher.outputs.summary }}
+        echo ${{ steps.test-metadata-provisionwatcher_error_4xx.outputs.summary }}
+        echo ${{ steps.test-support-notifications-subscription.outputs.summary }}
+        echo ${{ steps.test-support-notifications-notification.outputs.summary }}
+        echo ${{ steps.test-support-notifications-transmission.outputs.summary }}
+        echo ${{ steps.test-support-notifications-ping.outputs.summary }}
+        echo ${{ steps.test-support-scheduler-interval.outputs.summary }}
+        echo ${{ steps.test-support-scheduler-intervalAction.outputs.summary }}
+        echo ${{ steps.test-system-management.outputs.summary }}
+
