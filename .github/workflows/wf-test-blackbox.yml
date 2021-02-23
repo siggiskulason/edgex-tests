@@ -1,6 +1,6 @@
 name: Blackbox tests
 on: 
-  milestone
+  push
 jobs:
   run-checkbox-tests:
     runs-on: ubuntu-latest
