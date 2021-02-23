@@ -1,17 +1,24 @@
 name: Blackbox tests
 on: 
-   workflow_dispatch
+   workflow_dispatch:
+      inputs:
+         snap_channel:
+            description: 'Snap Channel'
+            required: true
+            default: 'latest/edge' 
 jobs:
-  run-checkbox-tests:
+  run-blackbox-tests:
     runs-on: ubuntu-latest
     steps:
-    - name: Environment setup part 1
+    - name: Environment setup part 1 
       run: |
         echo "Installing the required snaps for testing..."
-        echo "Will install edgexfoundry (edge)..."
-        sudo snap install --edge edgexfoundry
-        echo "Will install edgex-app-service-configurable (stable)..."
-        sudo snap install --edge edgex-app-service-configurable
+        
+        echo "Will install edgexfoundry (${{github.event.inputs.snap_channel}})..."
+        sudo snap install --channel=${{github.event.inputs.snap_channel}} edgexfoundry
+        echo "Will install edgex-app-service-configurable (${{github.event.inputs.snap_channel}})..."
+        sudo snap install -channel=${{github.event.inputs.snap_channel}} edgex-app-service-configurable
+        
         echo "Installing the required snaps for testing...Done"
         echo "Turning on services that are required for the tests..."
         sudo snap set edgexfoundry sys-mgmt-agent=on && sudo snap set edgexfoundry support-scheduler=on && sudo snap set edgexfoundry support-notifications=on && sudo snap set edgexfoundry device-virtual=on && sudo snap set edgex-app-service-configurable profile=blackbox-tests && sudo snap start edgex-app-service-configurable.app-service-configurable
