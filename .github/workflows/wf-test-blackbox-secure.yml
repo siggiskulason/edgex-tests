@@ -1,0 +1,86 @@
+name: Blackbox tests
+on: 
+   workflow_dispatch:
+      inputs:
+         snap_channel:
+            description: 'Snap Channel'
+            required: true
+            default: 'latest/stable' 
+jobs:
+  run-blackbox-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Environment setup part 1 
+      run: |
+        echo "Installing the required snaps for testing..."
+        
+        echo "Will install edgexfoundry (${{github.event.inputs.snap_channel}})..."
+        sudo snap install --channel=${{github.event.inputs.snap_channel}} edgexfoundry
+        echo "Will install edgex-app-service-configurable (${{github.event.inputs.snap_channel}})..."
+        sudo snap install --channel=${{github.event.inputs.snap_channel}} edgex-app-service-configurable
+        
+        echo "Installing the required snaps for testing...Done"
+        echo "Turning on services that are required for the tests..."
+        sudo snap set edgexfoundry sys-mgmt-agent=on && sudo snap set edgexfoundry support-scheduler=on && sudo snap set edgexfoundry support-notifications=on && sudo snap set edgexfoundry device-virtual=on && sudo snap set edgex-app-service-configurable profile=blackbox-tests && sudo snap start edgex-app-service-configurable.app-service-configurable
+        echo "Turning on services that are required for the tests...Done"
+        echo "Updating /etc/hosts..."
+        sudo echo "127.0.0.1 edgex-device-virtual" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-core-metadata" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-core-consul" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-app-service-configurable" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-core-data" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-core-command" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-support-notifications" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-support-scheduler" | sudo tee -a /etc/hosts
+        sudo echo "127.0.0.1 edgex-sys-mgmt-agent" | sudo tee -a /etc/hosts
+        echo "Done updating /etc/hosts..."
+        
+      shell: bash 
+    - name: Check out blackbox test repo
+      uses: actions/checkout@v2
+      with:
+        repository: edgexfoundry/blackbox-testing
+        ref: master
+
+    - name: Environment setup part 2
+      shell: bash 
+      run: |
+        echo "Installing the required snaps for testing..."
+        export postman=postman/newman:4.5.6 
+        
+        ln -s /home/runner/work/edgex-sync/edgex-sync/bin/files.sh $(dirname "$0")/files.sh
+        ln -s /home/runner/work/edgex-sync/edgex-sync/bin/config.sh $(dirname "$0")/config.sh
+        ln -s /home/runner/work/edgex-sync/edgex-sync/bin/postman-test $(dirname "$0")/postman-test 
+          
+        NAMESFILE=$(dirname "$0")/files.sh
+        
+        # copy the sample files used in metadata tests
+        cp bin/postman-test/*.yaml .
+        
+        if [ -f $NAMESFILE ]; then 
+          . $NAMESFILE
+        else 
+          echo "Error: Names file does not exist."
+        fi
+
+        echo "Current directory:"
+        pwd
+      
+#     deviceVirtualTest
+    - name: Security setup
+      shell: bash 
+      run: |
+        source $(dirname "$0")/security/setupSecurityAccount.sh -useradd
+
+      
+    - name: Test device-virtual
+      id: test-device-virtual
+      uses: anthonyvscode/newman-action@v1
+      with:
+        collection: bin/postman-test/collections/device-virtual.postman_collection.json
+        reporters: "junit,cli"
+        environment: bin/postman-test/environment/device-virtual-docker-security.postman_environment.json
+    - name: Security setup
+      shell: bash 
+      run: |
+        source $(dirname "$0")/security/setupSecurityAccount.sh -userdel
